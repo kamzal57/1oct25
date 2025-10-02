@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Présentation Pro Ultra - Créateur Avancé</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h1><i class="fas fa-presentation"></i> <span>Présentation Pro Ultra</span></h1>
+                <div class="sidebar-actions">
+                    <button class="btn-icon" onclick="addSlide()">
+                        <i class="fas fa-plus"></i> <span>Nouveau</span>
+                    </button>
+                    <button class="btn-icon" onclick="openTemplates()">
+                        <i class="fas fa-file-alt"></i> <span>Modèles</span>
+                    </button>
+                    <button class="btn-icon" onclick="toggleSidebar()">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="slides-section">
+                <div class="section-title">Diapositives</div>
+                <div class="slides-grid" id="slidesGrid"></div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Toolbar -->
+            <div class="top-toolbar">
+                <div class="toolbar-section">
+                    <div class="toolbar-group">
+                        <button class="toolbar-btn" onclick="undo()">
+                            <i class="fas fa-undo"></i>
+                        </button>
+                        <button class="toolbar-btn" onclick="redo()">
+                            <i class="fas fa-redo"></i>
+                        </button>
+                    </div>
+                    <div class="toolbar-group">
+                        <button class="toolbar-btn" onclick="zoomIn()">
+                            <i class="fas fa-search-plus"></i>
+                        </button>
+                        <button class="toolbar-btn" onclick="zoomOut()">
+                            <i class="fas fa-search-minus"></i>
+                        </button>
+                        <button class="toolbar-btn" onclick="resetZoom()">
+                            <i class="fas fa-compress"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="toolbar-section">
+                    <div class="toolbar-group">
+                        <button class="toolbar-btn" onclick="savePresentation()">
+                            <i class="fas fa-save"></i> Enregistrer
+                        </button>
+                        <button class="toolbar-btn" onclick="exportPresentation()">
+                            <i class="fas fa-download"></i> Exporter
+                        </button>
+                    </div>
+                    <div class="toolbar-group">
+                        <button class="toolbar-btn" onclick="sharePresentation()">
+                            <i class="fas fa-share"></i> Partager
+                        </button>
+                        <button class="toolbar-btn" onclick="printPresentation()">
+                            <i class="fas fa-print"></i> Imprimer
+                        </button>
+                    </div>
+                    <div class="toolbar-group">
+                        <button class="toolbar-btn btn-primary" onclick="startPresentation()">
+                            <i class="fas fa-play"></i> Présenter
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Editor Toolbar -->
+            <div class="editor-toolbar">
+                <div class="editor-group">
+                    <select class="font-selector" onchange="changeFont(this.value)">
+                        <option value="Arial">Arial</option>
+                        <option value="Helvetica">Helvetica</option>
+                        <option value="Times New Roman">Times</option>
+                        <option value="Georgia">Georgia</option>
+                        <option value="Verdana">Verdana</option>
+                        <option value="Comic Sans MS">Comic Sans</option>
+                    </select>
+                    <select class="font-size-selector" onchange="changeFontSize(this.value)">
+                        <option value="12">12</option>
+                        <option value="14">14</option>
+                        <option value="16">16</option>
+                        <option value="18">18</option>
+                        <option value="24">24</option>
+                        <option value="32">32</option>
+                        <option value="48">48</option>
+                        <option value="64">64</option>
+                    </select>
+                </div>
+                <div class="editor-group">
+                    <button class="editor-btn" onclick="formatText('bold')" title="Gras">
+                        <i class="fas fa-bold"></i>
+                    </button>
+                    <button class="editor-btn" onclick="formatText('italic')" title="Italique">
+                        <i class="fas fa-italic"></i>
+                    </button>
+                    <button class="editor-btn" onclick="formatText('underline')" title="Souligné">
+                        <i class="fas fa-underline"></i>
+                    </button>
+                    <button class="editor-btn" onclick="formatText('strikeThrough')" title="Barré">
+                        <i class="fas fa-strikethrough"></i>
+                    </button>
+                </div>
+                <div class="editor-group">
+                    <button class="editor-btn" onclick="formatText('justifyLeft')" title="Aligner à gauche">
+                        <i class="fas fa-align-left"></i>
+                    </button>
+                    <button class="editor-btn" onclick="formatText('justifyCenter')" title="Centrer">
+                        <i class="fas fa-align-center"></i>
+                    </button>
+                    <button class="editor-btn" onclick="formatText('justifyRight')" title="Aligner à droite">
+                        <i class="fas fa-align-right"></i>
+                    </button>
+                    <button class="editor-btn" onclick="formatText('justifyFull')" title="Justifier">
+                        <i class="fas fa-align-justify"></i>
+                    </button>
+                </div>
+                <div class="editor-group">
+                    <button class="editor-btn" onclick="formatText('insertOrderedList')" title="Liste numérotée">
+                        <i class="fas fa-list-ol"></i>
+                    </button>
+                    <button class="editor-btn" onclick="formatText('insertUnorderedList')" title="Liste à puces">
+                        <i class="fas fa-list-ul"></i>
+                    </button>
+                    <button class="editor-btn" onclick="insertLink()" title="Insérer un lien">
+                        <i class="fas fa-link"></i>
+                    </button>
+                </div>
+                <div class="editor-group">
+                    <input type="color" class="color-picker" onchange="changeTextColor(this.value)" title="Couleur du texte">
+                    <input type="color" class="color-picker" onchange="changeBackgroundColor(this.value)" title="Couleur de fond">
+                </div>
+                <div class="editor-group">
+                    <button class="editor-btn" onclick="addShape('rectangle')" title="Ajouter un rectangle">
+                        <i class="fas fa-square"></i>
+                    </button>
+                    <button class="editor-btn" onclick="addShape('circle')" title="Ajouter un cercle">
+                        <i class="fas fa-circle"></i>
+                    </button>
+                    <button class="editor-btn" onclick="addShape('triangle')" title="Ajouter un triangle">
+                        <i class="fas fa-play"></i>
+                    </button>
+                    <button class="editor-btn" onclick="addImage()" title="Ajouter une image">
+                        <i class="fas fa-image"></i>
+                    </button>
+                    <button class="editor-btn" onclick="addChart()" title="Ajouter un graphique">
+                        <i class="fas fa-chart-bar"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Canvas Area -->
+            <div class="canvas-container" id="canvasContainer">
+                <div class="canvas-wrapper" id="canvasWrapper">
+                    <div class="slide-canvas" id="slideCanvas">
+                        <div class="slide-content layout-title" id="slideContent">
+                            <div class="title" contenteditable="true" onblur="updateSlideContent('title', this.innerText)">Titre de la Présentation</div>
+                            <div class="subtitle" contenteditable="true" onblur="updateSlideContent('subtitle', this.innerText)">Sous-titre optionnel</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Panel -->
+        <aside class="right-panel" id="rightPanel">
+            <div class="panel-tabs">
+                <button class="panel-tab active" onclick="switchPanelTab('layout')">Disposition</button>
+                <button class="panel-tab" onclick="switchPanelTab('theme')">Thème</button>
+                <button class="panel-tab" onclick="switchPanelTab('transition')">Transition</button>
+                <button class="panel-tab" onclick="switchPanelTab('notes')">Notes</button>
+            </div>
+            <div class="panel-content" id="panelContent">
+                <!-- Content will be loaded dynamically -->
+            </div>
+        </aside>
+    </div>
+
+    <!-- Presentation Overlay -->
+    <div class="presentation-overlay" id="presentationOverlay">
+        <div class="presentation-slide" id="presentationSlide"></div>
+        <div class="slide-counter" id="slideCounter">1 / 1</div>
+        <div class="presentation-notes" id="presentationNotes" style="display: none;"></div>
+        <div class="presentation-controls">
+            <button onclick="previousSlide()">
+                <i class="fas fa-chevron-left"></i> Précédent
+            </button>
+            <button onclick="toggleNotes()">
+                <i class="fas fa-sticky-note"></i> Notes
+            </button>
+            <button onclick="toggleFullscreen()">
+                <i class="fas fa-expand"></i> Plein écran
+            </button>
+            <button onclick="exitPresentation()">
+                <i class="fas fa-times"></i> Quitter
+            </button>
+            <button onclick="nextSlide()">
+                Suivant <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal" id="teamMemberModal"></div>
+    <div class="modal" id="qcmModal"></div>
+    <div class="modal" id="templatesModal"></div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <script src="layouts.js"></script>
+    <script src="interactions.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
