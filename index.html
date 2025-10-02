@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Présentation Pro Ultra</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Main Layout -->
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-presentation"></i> Diapositives</h2>
+                <button class="btn-icon" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            <div class="slides-list" id="slidesList"></div>
+            <button class="btn-primary" style="width: 100%; margin: 10px 0;" onclick="addSlide()">
+                <i class="fas fa-plus"></i> Nouveau
+            </button>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Toolbar -->
+            <div class="toolbar">
+                <div class="toolbar-group">
+                    <button class="btn-icon" onclick="undo()" title="Annuler (Ctrl+Z)">
+                        <i class="fas fa-undo"></i>
+                    </button>
+                    <button class="btn-icon" onclick="redo()" title="Rétablir (Ctrl+Shift+Z)">
+                        <i class="fas fa-redo"></i>
+                    </button>
+                </div>
+                
+                <div class="toolbar-group">
+                    <button class="btn-icon" onclick="document.execCommand('bold')" title="Gras">
+                        <i class="fas fa-bold"></i>
+                    </button>
+                    <button class="btn-icon" onclick="document.execCommand('italic')" title="Italique">
+                        <i class="fas fa-italic"></i>
+                    </button>
+                    <button class="btn-icon" onclick="document.execCommand('underline')" title="Souligné">
+                        <i class="fas fa-underline"></i>
+                    </button>
+                </div>
+                
+                <div class="toolbar-group">
+                    <button class="btn-icon" onclick="zoomOut()" title="Zoom -">
+                        <i class="fas fa-search-minus"></i>
+                    </button>
+                    <span id="zoomLevel">100%</span>
+                    <button class="btn-icon" onclick="zoomIn()" title="Zoom +">
+                        <i class="fas fa-search-plus"></i>
+                    </button>
+                    <button class="btn-icon" onclick="resetZoom()" title="Réinitialiser">
+                        <i class="fas fa-compress"></i>
+                    </button>
+                </div>
+                
+                <div class="toolbar-group">
+                    <button class="btn-icon" onclick="openTemplates()" title="Modèles (Ctrl+Shift+C)">
+                        <i class="fas fa-file-powerpoint"></i>
+                    </button>
+                    <button class="btn-icon" onclick="savePresentation()" title="Sauvegarder (Ctrl+S)">
+                        <i class="fas fa-save"></i>
+                    </button>
+                    <button class="btn-icon" onclick="exportPresentation()" title="Exporter (Ctrl+E)">
+                        <i class="fas fa-download"></i>
+                    </button>
+                    <button class="btn-icon" onclick="sharePresentation()" title="Partager">
+                        <i class="fas fa-share-alt"></i>
+                    </button>
+                </div>
+                
+                <div class="toolbar-group">
+                    <button class="btn-primary" onclick="startPresentation()" title="Présenter (F5)">
+                        <i class="fas fa-play"></i> Présenter
+                    </button>
+                </div>
+            </div>
+
+            <!-- Canvas Area -->
+            <div class="canvas-container" id="canvasContainer">
+                <div class="canvas-wrapper" id="canvasWrapper">
+                    <div class="canvas" id="canvas"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel -->
+        <div id="rightPanel" class="right-panel">
+            <div class="panel-header">
+                <div class="panel-tabs">
+                    <button class="panel-tab active" onclick="switchPanelTab('layout')">Disposition</button>
+                    <button class="panel-tab" onclick="switchPanelTab('theme')">Thème</button>
+                    <button class="panel-tab" onclick="switchPanelTab('transition')">Transition</button>
+                    <button class="panel-tab" onclick="switchPanelTab('notes')">Notes</button>
+                </div>
+                <button class="btn-icon" onclick="toggleRightPanel()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="panel-content">
+                <!-- Layout Tab -->
+                <div id="layoutTab" class="panel-tab-content">
+                    <h3>Dispositions</h3>
+                    <div class="layout-grid">
+                        <div class="layout-option" onclick="changeLayout('title')">
+                            <div class="layout-preview">
+                                <div style="height: 30%; background: rgba(99, 102, 241, 0.3); margin-bottom: 10px;"></div>
+                                <div style="height: 20%; background: rgba(99, 102, 241, 0.2);"></div>
+                            </div>
+                            <span>Titre</span>
+                        </div>
+                        <div class="layout-option" onclick="changeLayout('content')">
+                            <div class="layout-preview">
+                                <div style="height: 20%; background: rgba(99, 102, 241, 0.3); margin-bottom: 10px;"></div>
+                                <div style="height: 60%; background: rgba(99, 102, 241, 0.2);"></div>
+                            </div>
+                            <span>Contenu</span>
+                        </div>
+                        <div class="layout-option" onclick="changeLayout('two-columns')">
+                            <div class="layout-preview">
+                                <div style="display: flex; gap: 5px;">
+                                    <div style="flex: 1; height: 70px; background: rgba(99, 102, 241, 0.2);"></div>
+                                    <div style="flex: 1; height: 70px; background: rgba(99, 102, 241, 0.2);"></div>
+                                </div>
+                            </div>
+                            <span>2 Colonnes</span>
+                        </div>
+                        <div class="layout-option" onclick="changeLayout('three-columns')">
+                            <div class="layout-preview">
+                                <div style="display: flex; gap: 3px;">
+                                    <div style="flex: 1; height: 70px; background: rgba(99, 102, 241, 0.2);"></div>
+                                    <div style="flex: 1; height: 70px; background: rgba(99, 102, 241, 0.2);"></div>
+                                    <div style="flex: 1; height: 70px; background: rgba(99, 102, 241, 0.2);"></div>
+                                </div>
+                            </div>
+                            <span>3 Colonnes</span>
+                        </div>
+                        <div class="layout-option" onclick="changeLayout('comparison')">
+                            <div class="layout-preview">
+                                <div style="display: flex; gap: 5px;">
+                                    <div style="flex: 1; height: 70px; background: rgba(34, 197, 94, 0.2);"></div>
+                                    <div style="flex: 1; height: 70px; background: rgba(239, 68, 68, 0.2);"></div>
+                                </div>
+                            </div>
+                            <span>Comparaison</span>
+                        </div>
+                        <div class="layout-option" onclick="changeLayout('quote')">
+                            <div class="layout-preview">
+                                <div style="display: flex; align-items: center; justify-content: center; height: 70px;">
+                                    <i class="fas fa-quote-left" style="font-size: 2rem; color: rgba(99, 102, 241, 0.3);"></i>
+                                </div>
+                            </div>
+                            <span>Citation</span>
+                        </div>
+                        <div class="layout-option" onclick="changeLayout('team')">
+                            <div class="layout-preview">
+                                <div style="display: flex; gap: 3px; justify-content: center;">
+                                    <div style="width: 20px; height: 20px; border-radius: 50%; background: rgba(99, 102, 241, 0.2);"></div>
+                                    <div style="width: 20px; height: 20px; border-radius: 50%; background: rgba(99, 102, 241, 0.2);"></div>
+                                    <div style="width: 20px; height: 20px; border-radius: 50%; background: rgba(99, 102, 241, 0.2);"></div>
+                                </div>
+                            </div>
+                            <span>Équipe</span>
+                        </div>
+                        <div class="layout-option" onclick="changeLayout('chart')">
+                            <div class="layout-preview">
+                                <div style="display: flex; align-items: flex-end; gap: 3px; height: 70px; padding: 10px;">
+                                    <div style="flex: 1; background: rgba(99, 102, 241, 0.2); height: 40%;"></div>
+                                    <div style="flex: 1; background: rgba(99, 102, 241, 0.2); height: 70%;"></div>
+                                    <div style="flex: 1; background: rgba(99, 102, 241, 0.2); height: 50%;"></div>
+                                </div>
+                            </div>
+                            <span>Graphique</span>
+                        </div>
+                        <div class="layout-option" onclick="changeLayout('qcm')">
+                            <div class="layout-preview">
+                                <div style="padding: 10px;">
+                                    <div style="height: 15px; background: rgba(99, 102, 241, 0.3); margin-bottom: 5px;"></div>
+                                    <div style="height: 8px; background: rgba(99, 102, 241, 0.2); margin-bottom: 3px;"></div>
+                                    <div style="height: 8px; background: rgba(99, 102, 241, 0.2); margin-bottom: 3px;"></div>
+                                    <div style="height: 8px; background: rgba(99, 102, 241, 0.2);"></div>
+                                </div>
+                            </div>
+                            <span>QCM</span>
+                        </div>
+                        <div class="layout-option" onclick="changeLayout('timeline')">
+                            <div class="layout-preview">
+                                <div style="position: relative; height: 70px;">
+                                    <div style="position: absolute; left: 50%; width: 2px; height: 100%; background: rgba(99, 102, 241, 0.2);"></div>
+                                    <div style="width: 10px; height: 10px; border-radius: 50%; background: rgba(99, 102, 241, 0.3); position: absolute; left: 45%; top: 10px;"></div>
+                                    <div style="width: 10px; height: 10px; border-radius: 50%; background: rgba(99, 102, 241, 0.3); position: absolute; left: 45%; top: 50%;"></div>
+                                </div>
+                            </div>
+                            <span>Timeline</span>
+                        </div>
+                        <div class="layout-option" onclick="changeLayout('process')">
+                            <div class="layout-preview">
+                                <div style="display: flex; gap: 3px; align-items: center;">
+                                    <div style="width: 15px; height: 15px; border-radius: 50%; background: rgba(99, 102, 241, 0.2);"></div>
+                                    <div style="flex: 1; height: 2px; background: rgba(99, 102, 241, 0.2);"></div>
+                                    <div style="width: 15px; height: 15px; border-radius: 50%; background: rgba(99, 102, 241, 0.2);"></div>
+                                </div>
+                            </div>
+                            <span>Processus</span>
+                        </div>
+                        <div class="layout-option" onclick="changeLayout('swot')">
+                            <div class="layout-preview">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2px; height: 70px;">
+                                    <div style="background: rgba(34, 197, 94, 0.2);"></div>
+                                    <div style="background: rgba(239, 68, 68, 0.2);"></div>
+                                    <div style="background: rgba(59, 130, 246, 0.2);"></div>
+                                    <div style="background: rgba(251, 146, 60, 0.2);"></div>
+                                </div>
+                            </div>
+                            <span>SWOT</span>
+                        </div>
+                        <div class="layout-option" onclick="changeLayout('summary')">
+                            <div class="layout-preview">
+                                <div style="padding: 10px;">
+                                    <div style="height: 8px; background: rgba(99, 102, 241, 0.2); margin-bottom: 5px;"></div>
+                                    <div style="height: 8px; background: rgba(99, 102, 241, 0.2); margin-bottom: 5px;"></div>
+                                    <div style="height: 8px; background: rgba(99, 102, 241, 0.2); margin-bottom: 5px;"></div>
+                                    <div style="height: 8px; background: rgba(99, 102, 241, 0.2);"></div>
+                                </div>
+                            </div>
+                            <span>Sommaire</span>
+                        </div>
+                        <div class="layout-option" onclick="changeLayout('video')">
+                            <div class="layout-preview">
+                                <div style="display: flex; align-items: center; justify-content: center; height: 70px; background: rgba(0, 0, 0, 0.1);">
+                                    <i class="fas fa-play-circle" style="font-size: 2rem; color: rgba(99, 102, 241, 0.3);"></i>
+                                </div>
+                            </div>
+                            <span>Vidéo</span>
+                        </div>
+                        <div class="layout-option" onclick="changeLayout('html')">
+                            <div class="layout-preview">
+                                <div style="display: flex; align-items: center; justify-content: center; height: 70px;">
+                                    <i class="fas fa-code" style="font-size: 2rem; color: rgba(99, 102, 241, 0.3);"></i>
+                                </div>
+                            </div>
+                            <span>HTML</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Theme Tab -->
+                <div id="themeTab" class="panel-tab-content" style="display: none;">
+                    <h3>Thèmes</h3>
+                    <div class="theme-grid">
+                        <div class="theme-option" onclick="changeTheme('default')">
+                            <div class="theme-preview" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
+                            <span>Défaut</span>
+                        </div>
+                        <div class="theme-option" onclick="changeTheme('dark')">
+                            <div class="theme-preview" style="background: linear-gradient(135deg, #434343 0%, #000000 100%);"></div>
+                            <span>Sombre</span>
+                        </div>
+                        <div class="theme-option" onclick="changeTheme('ocean')">
+                            <div class="theme-preview" style="background: linear-gradient(135deg, #667eea 0%, #00d4ff 100%);"></div>
+                            <span>Océan</span>
+                        </div>
+                        <div class="theme-option" onclick="changeTheme('sunset')">
+                            <div class="theme-preview" style="background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);"></div>
+                            <span>Coucher de soleil</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Transition Tab -->
+                <div id="transitionTab" class="panel-tab-content" style="display: none;">
+                    <h3>Transitions</h3>
+                    <select id="transitionSelect" class="form-control" onchange="changeTransition(this.value)">
+                        <option value="none">Aucune</option>
+                        <option value="fade">Fondu</option>
+                        <option value="slide">Glissement</option>
+                        <option value="zoom">Zoom</option>
+                    </select>
+                </div>
+
+                <!-- Notes Tab -->
+                <div id="notesTab" class="panel-tab-content" style="display: none;">
+                    <h3>Notes du présentateur</h3>
+                    <textarea id="notesTextarea" class="form-control" style="height: 200px;" placeholder="Ajoutez vos notes ici..." onchange="updateNotes()"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Presentation Overlay -->
+    <div id="presentationOverlay" class="presentation-overlay">
+        <div class="presentation-container">
+            <div class="presentation-slide" id="presentationSlide"></div>
+            <div class="presentation-notes" id="presentationNotes" style="display: none;"></div>
+        </div>
+        
+        <div class="presentation-controls">
+            <button class="btn-icon" onclick="previousSlide()">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <span id="slideCounter">1 / 1</span>
+            <button class="btn-icon" onclick="nextSlide()">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+            <button class="btn-icon" onclick="toggleNotes()">
+                <i class="fas fa-sticky-note"></i>
+            </button>
+            <button class="btn-icon" onclick="toggleFullscreen()">
+                <i class="fas fa-expand"></i>
+            </button>
+            <button class="btn-icon" onclick="exitPresentation()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Templates Modal -->
+    <div id="templatesModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Modèles de Présentation</h2>
+                <button class="btn-icon" onclick="closeTemplates()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="template-grid">
+                    <div class="template-card" onclick="applyTemplate('business')">
+                        <div class="template-icon">💼</div>
+                        <h3>Business</h3>
+                        <p>Présentation commerciale professionnelle</p>
+                    </div>
+                    <div class="template-card" onclick="applyTemplate('education')">
+                        <div class="template-icon">📚</div>
+                        <h3>Éducation</h3>
+                        <p>Leçon interactive avec QCM</p>
+                    </div>
+                    <div class="template-card" onclick="applyTemplate('creative')">
+                        <div class="template-icon">🎨</div>
+                        <h3>Créatif</h3>
+                        <p>Portfolio artistique moderne</p>
+                    </div>
+                    <div class="template-card" onclick="applyTemplate('tech')">
+                        <div class="template-icon">💻</div>
+                        <h3>Technique</h3>
+                        <p>Architecture et solution tech</p>
+                    </div>
+                    <div class="template-card" onclick="applyTemplate('marketing')">
+                        <div class="template-icon">📊</div>
+                        <h3>Marketing</h3>
+                        <p>Campagne marketing complète</p>
+                    </div>
+                    <div class="template-card" onclick="applyTemplate('minimal')">
+                        <div class="template-icon">⚪</div>
+                        <h3>Minimaliste</h3>
+                        <p>Design épuré et efficace</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="app.js"></script>
+    <script src="layouts.js"></script>
+    <script src="interactions.js"></script>
+</body>
+</html>
